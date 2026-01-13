@@ -19,7 +19,7 @@ pipeline {
           echo Code Quality Failed
           exit 1
         ) else (
-            echo Code Quality Passed
+          echo Code Quality Passed
         )
         '''
       }
