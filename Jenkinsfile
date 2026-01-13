@@ -1,17 +1,17 @@
-pipeline{
+pipeline {
   agent any
 
-  stages{
+  stages {
 
-    stage('Checkout'){
-      steps{
+    stage ('Checkout'){
+      steps {
         echo 'Fetching source code'
         checkout scm
       }
     }
 
-    stage('Code Quality CHeck!'){
-      steps{
+    stage ('Code Quality CHeck!'){
+      steps {
         echo 'Checking code quality'
         bat '''
         findstr GOOD quality.txt > nul
@@ -20,9 +20,37 @@ pipeline{
           exit 1
         ) else (
             echo Code Quality Passed
-        ) '''
+        )
+        '''
       }
     }
-    
+
+    stage ('Generate Report '){
+      steps {
+        echo 'Genrating build report'
+        bat '''
+        mkdir reports
+        echo Build Successful > reports\\build-report.txt
+        '''
+        
+      }
+    }
+
+    stage ('Archive Artifacts'){
+      steps {
+        echo 'Archiving Reports'
+        archiveArtifacts artifacts: 'reports/*.txt', fingerprint: true
+      }
+    } 
   }
+
+  post {
+    success {
+      echo 'Pipeline completed successfully'
+    }
+    failure {
+      echo 'Pipeline failed- code blocked'
+    }
+  }
+  
 }
